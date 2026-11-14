@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<app version="1">
+  <name>LocalSend pour Wii</name>
+  <coder>Chaly</coder>
+  <version>0.7</version>
+  <release_date>20261114000000</release_date>
+  <short_description>Recevoir des fichiers via LocalSend</short_description>
+  <long_description>Recepteur LocalSend (protocole v2) avec HTTPS. Fichiers recus dans sd:/localsend, rangement des .wad et des ROMs (SD ou cle USB), installation via YAWM ModMii Edition, mise a jour sans retirer la SD.
+1 : reglages   HOME : quitter.</long_description>
+  <no_ios_reload/>
+</app>

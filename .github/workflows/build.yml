@@ -1,0 +1,51 @@
+# Compile LocalSend pour Wii avec devkitPPC a chaque push.
+# Un tag "v*" (ex. v0.8) publie une release avec boot.dol : la Wii s'en sert
+# pour se mettre a jour toute seule.
+name: Compilation
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: devkitpro/devkitppc:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compiler
+        run: make -j"$(nproc)"
+
+      - name: Preparer les fichiers
+        run: |
+          mkdir -p out/apps/localsend
+          cp localsend-wii.dol out/apps/localsend/boot.dol
+          cp sd/apps/localsend/meta.xml sd/apps/localsend/icon.png out/apps/localsend/
+          cp localsend-wii.dol boot.dol
+          ls -l boot.dol
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: localsend-wii
+          path: out
+
+      - name: Archive pour la release
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          apt-get update -qq && apt-get install -y -qq zip > /dev/null
+          (cd out && zip -qr ../localsend-wii.zip apps)
+
+      - name: Publier la release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            boot.dol
+            localsend-wii.zip
