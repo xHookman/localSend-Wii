@@ -133,9 +133,9 @@ static int make_cert(const br_ec_impl *ec) {
     br_sha256_update(&h, tbs, tlen);
     br_sha256_out(&h, hash);
     size_t slen = br_ecdsa_sign_asn1_get_default()(ec, &br_sha256_vtable, hash, &sk, sig);
-    if (!slen) return -1;
+    if (slen == 0 || slen > sizeof(sig)) return -1;
 
-    unsigned char body[560], bits[90];
+    unsigned char body[560], bits[sizeof(sig) + 1];
     int b = 0;
     memcpy(body + b, tbs, tlen); b += tlen;
     memcpy(body + b, OID_ECDSA_SHA256, sizeof(OID_ECDSA_SHA256)); b += sizeof(OID_ECDSA_SHA256);
